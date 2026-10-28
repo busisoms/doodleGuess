@@ -3,11 +3,28 @@
     <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script>
+            const socket = new WebSocket("ws://localhost:7000/ws");
+            socket.onopen = () => {
+                console.log("WebSocket connected!");
+            };
+
+            socket.onerror = (error) => {
+                console.error("WebSocket error:", error);
+            };
+
+            socket.onclose = () => {
+                console.log("WebSocket disconnected!");
+            };
+        </script>
     <title>Doodle Guess</title>
     </head>
     <body>
         <h1>Doodle Guess</h1>
         <p>Welcome to Doodle Guess!</p>
+        <p>Message</p>
+        <input type="text" id="message">
+        <button type="button" onclick="sendMessage('Hello!')">Send Message</button>
 
     </body>
 </html>

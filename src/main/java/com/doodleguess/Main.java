@@ -2,6 +2,7 @@ package com.doodleguess;
 
 import io.javalin.Javalin;
 import io.javalin.config.RoutesConfig;
+import io.javalin.websocket.WsConfig;
 import io.javalin.http.Context;
 import io.javalin.http.staticfiles.Location;
 
@@ -21,12 +22,31 @@ public class Main {
         app.start(Integer.parseInt(envPort));
     }
 
-    public static void register(RoutesConfig routes){
+    private static void register(RoutesConfig routes){
         routes.get("/health", Main::health);
+        routes.ws("/ws", Main::socketHandler);
     }
 
-    public static void health(Context ctx){
+    private static void health(Context ctx){
         ctx.status(200).result("OK");
+    }
+
+    private static void socketHandler(WsConfig ws){
+        ws.onConnect(ctx ->
+                System.out.println("Connected -> "
+                        + ctx.sessionId())
+        );
+
+        ws.onClose(ctx ->
+                System.out.println("Session closed -> "
+                        + ctx.sessionId())
+        );
+
+        ws.onMessage(ctx -> {
+            String message = ctx.message();
+            ctx.send(message);
+        });
+
     }
 
     private static String env(String key, String fallback) {
